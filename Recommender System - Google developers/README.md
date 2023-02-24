@@ -127,3 +127,33 @@ $O(nm) \rightarrow O((n+m)d)$
   - Can be parallelized
   - Converges faster than SGD
   - Easier to handle unobserved entries
+
+---
+
+## Deep Neural Network Models
+
+Matrix Factorization has some limitations...
+
+- Difficult to use side features (any features beyond the query ID / itemID), so that the model can only be queried with a user or item present in the training set.
+- Popular items tend to be recommended especially when using dot product as a similarity measure.
+
+DNN models can address these limitations. DNNs can easily incormporate query features and item features (due to the flexibility of the input layer of the network), which can help capture the specific interests of a user and improve the relevance of recommendations.
+
+---
+
+### Softmax DNN for Recommendation
+
+One possible DNN model is softmax, which treats the problem as a multiclass prediction problem in which:
+
+- The input is the user query
+- The output is a probability vector with size equeal to the number of items in the corpus. ex) the probability to click on or watch a YouTube video.
+
+---
+
+### DNN and Matrix Factorization
+
+In both the softmax model and the matrix factoriztion model, the system learns one embeddingvector $V_j$ per item $j$. What we called the _item embedding matrix_ $V \in \R^{n\times d}$ in matrix factorization is now the _matrix of weights_ of the softmax layer.  
+However, the query embeddings are different. Instead of learning one embedding $U_i$ per query $i$, the system learns a mapping from the query feature $x$ to an embedding $\psi(x)\in \R ^d$. Therefore, a DNN model can be seen as a generalization of the matrix factorization, in which you replace the query side by a nonlinear function $\psi()$.
+
+- Matrix factorization is usually the better choice for large corpora. It is easier to scale, cheaper to query, and less prone to [folding](https://dl.acm.org/doi/10.1145/3109859.3109911).
+- DNN models can better capture personalized preferences, but are harder to train and more expensive to query. DNN models are preferable to matrix factorization for scoring because DNN models can use more features to better capture relevance. Also, it is usually acceptable for DNN models to fold, since you mostly care about ranking a pre-filtered set of candidates assumed to be relevant.
